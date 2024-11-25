@@ -1,0 +1,37 @@
+from PIL import Image, ImageEnhance, ImageFilter
+import os
+
+# Define paths
+path = './imgs'  # Replace with an absolute path if necessary
+pathOut = './editedImgs'
+
+# Ensure the input and output directories exist
+if not os.path.exists(path):
+    print(f"Error: Input directory {path} does not exist.")
+    exit()
+
+os.makedirs(pathOut, exist_ok=True)
+
+# Process images
+for filename in os.listdir(path):
+    try:
+        img_path = os.path.join(path, filename)
+        img = Image.open(img_path)
+
+        # Edit the image
+        edit = img.filter(ImageFilter.SHARPEN).convert('L').rotate(-90)
+
+        # Enhance the contrast
+        factor = 1.5
+        enhancer = ImageEnhance.Contrast(edit)
+        edit = enhancer.enhance(factor)
+
+        # Save the edited image
+        clean_name = os.path.splitext(filename)[0]
+        output_path = os.path.join(pathOut, f"{clean_name}_edited.jpg")
+        edit.save(output_path)
+
+        print(f"Edited and saved: {output_path}")
+
+    except Exception as e:
+        print(f"Could not process {filename}: {e}")
